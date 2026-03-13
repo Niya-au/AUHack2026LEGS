@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="regPageTrims.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leg Leaderboard</title>
+</head>
+<body>
+
+<div id="vueApp">
+    <div class="topBtns">
+    <input v-model="newName" type="text" placeholder="Enter your Initials!">
+    <button @click="addName">Add to Leaderboard</button>
+    </div>
+        <ul class=listView>
+            <li v-for="(item, i) in nameList" :key="i">{{ item }}</li>
+        </ul>
+    <button @click="clearList">Delete List</button>
+</div>
+
+
+<script>
+    const newObj = Vue.createApp({
+        data() {
+            return {
+                nameList: ['GREG','JANE','LARS'],
+                newName: ''
+            }
+        },
+        methods: {
+            addName() {this.nameList.push(this.newName);this.newName = '';},
+            clearList() {this.nameList = [];}
+        }
+    });
+    newObj.mount('#vueApp');
+</script>
+
+</body>
+</html>
