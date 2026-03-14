@@ -1,45 +1,109 @@
-// Import WiFi and ESPSupabase Library
+// Import WiFi and HTTP libraries
 #include <WiFi.h>
-#include <ESPSupabase.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 
-// Add you Wi-Fi credentials
+// Add your Wi-Fi credentials
 const char* ssid = "YOUR SSID";
 const char* password = "YOUR PASSWORD";
 
 // Supabase credentials
-const char* supabaseUrl = "https://sefoaaasnyorakarqsrm.supabase.co/rest/v1/a_leg";
+const char* supabaseUrl = "https://sefoaaasnyorakarqsrm.supabase.co";
 const char* supabaseKey = "SUPABASE_ANON_KEY";
 
-Supabase supabase;
+// How often to poll (ms)
+const unsigned long POLL_INTERVAL = 3000;
+unsigned long lastPoll = 0;
+
+// Check if a leg is armed (time IS NULL in a_leg table).
+// Returns true and fills out_id/out_username if an armed leg is found.
+bool checkArmedLeg(long& out_id, String& out_username) {
+  HTTPClient http;
+  String url = String(supabaseUrl) + "/rest/v1/rpc/is_leg_armed";
+
+  http.begin(url);
+  http.addHeader("apikey", supabaseKey);
+  http.addHeader("Authorization", String("Bearer ") + supabaseKey);
+  http.addHeader("Content-Type", "application/json");
+
+  // RPC with no arguments still needs an empty JSON body on POST
+  int httpCode = http.POST("{}");
+
+  if (httpCode != 200) {
+    Serial.printf("Poll failed, HTTP %d\n", httpCode);
+    http.end();
+    return false;
+  }
+
+  String payload = http.getString();
+  http.end();
+
+  // Response is an array: [] if no armed leg, [{"id":5,"username":"alice"}] if armed
+  StaticJsonDocument<256> doc;
+  DeserializationError err = deserializeJson(doc, payload);
+  if (err || !doc.is<JsonArray>() || doc.as<JsonArray>().size() == 0) {
+    return false;
+  }
+
+  JsonObject row = doc[0];
+  out_id = row["id"].as<long>();
+  out_username = row["username"].as<String>();
+  return true;
+}
+
+// Submit the measured time via RPC — updates whichever row currently has time=NULL.
+// Robust against re-arming: if the leg was re-armed between poll and submit,
+// the new armed row gets the time instead of failing silently.
+bool submitTime(long timeMs) {
+  HTTPClient http;
+  String url = String(supabaseUrl) + "/rest/v1/rpc/submit_leg_time";
+
+  http.begin(url);
+  http.addHeader("apikey", supabaseKey);
+  http.addHeader("Authorization", String("Bearer ") + supabaseKey);
+  http.addHeader("Content-Type", "application/json");
+
+  String body = String("{\"p_time\":") + timeMs + "}";
+  int httpCode = http.POST(body);
+
+  String payload = http.getString();
+  http.end();
+
+  // RPC returns true if a row was updated, false if no armed leg existed anymore
+  return (httpCode == 200 && payload == "true");
+}
 
 void setup() {
   Serial.begin(115200);
 
-  // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to Wi-Fi...");
   }
   Serial.println("Wi-Fi connected!");
-
-  // Init Supabase
-  supabase.begin(supabaseUrl, supabaseKey);
-
-  // Add the table name here
-  String tableName = "a_leg";
-  // change the correct columns names you create in your table
-  String jsonData = "{\"time\": \"7\"}";
-
-  // sending data to supabase
-  int response = supabase.insert(tableName, jsonData, false);
-  if (response == 200) {
-    Serial.println("Data inserted successfully!");
-  } else {
-    Serial.print("Failed to insert data. HTTP response: ");
-    Serial.println(response);
-  }
 }
 
 void loop() {
+  unsigned long now = millis();
+  if (now - lastPoll < POLL_INTERVAL) return;
+  lastPoll = now;
+
+  long armedId;
+  String armedUser;
+
+  if (checkArmedLeg(armedId, armedUser)) {
+    Serial.printf("Leg armed! id=%ld user=%s\n", armedId, armedUser.c_str());
+
+    // TODO: replace this with your actual sensor measurement
+    long measuredTimeMs = 1234;
+
+    if (submitTime(measuredTimeMs)) {
+      Serial.printf("Time submitted: %ldms\n", measuredTimeMs);
+    } else {
+      Serial.println("Failed to submit time.");
+    }
+  } else {
+    Serial.println("No armed leg.");
+  }
 }
