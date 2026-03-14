@@ -113,8 +113,7 @@ p {
   margin-bottom: 10px;
   box-shadow: 1px 2px 2px black;
 }
-
-#leaderboard {
+.leaderboard {
   width: 110px;
   height: 30px;
   border-radius: 6px;
@@ -147,7 +146,7 @@ p {
   margin-bottom: 4px;
 }
 
-#paragraphP {
+.paragraphP {
   font-size: 37px;
   margin-top: 120px;
   margin-bottom: 50px !important;
@@ -173,11 +172,11 @@ input {
   display: flex;
   flex-direction: row;
   margin-top: 300px;
-  gap: 20px;
+  gap: 95px;
 }
 
 .nextBack{
-  width: 110px;
+  width: 80px;
   height: 30px;
   border-radius: 6px;
   border: transparent;
@@ -186,7 +185,48 @@ input {
   font-weight: 400;
   font-style: normal;
   background-color: #A79D7A;
+
+  box-shadow: 1px 2px 2px black;
 }
+
+
+/*-------------------------- first time user -> no ---------------------------*/
+
+.topBtns{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#OldUser p{
+  text-align: left;
+  width: 240px;
+  margin-bottom: 4px;
+}
+
+
+/*-------------------------- Registration success ---------------------------*/
+
+#confScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#confScreen p{
+  text-align: center;
+  width: 270px;
+  margin-bottom: 4px;
+}
+
+#confScreen button{
+  margin-top: 360px;
+}
+
+#bigText{
+  margin-bottom: 35px !important;
+}
+
 
 
 
@@ -204,4 +244,4 @@ li {
   background-color: #f9f9f9;
   border-radius: 4px;
 }
-}
+
