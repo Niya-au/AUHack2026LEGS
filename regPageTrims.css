@@ -63,6 +63,10 @@
   /*x y r c */
 }
 
+button:hover{
+  cursor: grab;
+}
+
 #titleL {
   font-family: "Allerta", sans-serif;
   font-size: 64px;
@@ -117,13 +121,16 @@ p {
 .leaderboard {
   width: 110px;
   height: 30px;
-  border-radius: 6px;
+  border-radius: 17px;
   border: transparent;
   font-family: "Allerta", sans-serif;
   font-size: 14px;
   font-weight: 400;
   font-style: normal;
-  background-color: #A79D7A;
+  background-color:#e1e1e1;;
+  
+  
+  color: #000000;
 
   margin-top: 70px;
   box-shadow: 1px 2px 2px black;
@@ -179,15 +186,18 @@ input {
 .nextBack {
   width: 80px;
   height: 30px;
-  border-radius: 6px;
+  border-radius: 23px;
   border: transparent;
   font-family: "Allerta", sans-serif;
   font-size: 14px;
   font-weight: 400;
   font-style: normal;
-  background-color: #A79D7A;
-
+  background-color: #f1f1f1;
   box-shadow: 1px 2px 2px black;
+}
+
+.nextBack:hover {
+  cursor: grab;
 }
 
 
@@ -234,6 +244,7 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 800px; 
 }
 
 #leaderboard p {
@@ -252,6 +263,12 @@ input {
   width: 40px;
   height: 40px;
   margin-bottom: 10px;
+  filter: brightness(0) invert(1);
+}
+
+#backButton:hover{
+  cursor: grab;
+filter: brightness(0) invert(0.9); 
 }
 
 ul {
@@ -269,6 +286,7 @@ ul {
   align-items: center;
 
   box-shadow: 0px -5px 6px rgba(0, 0, 0, 0.3);
+  margin-top: auto; 
 }
 
 .listView {
@@ -276,6 +294,8 @@ ul {
   font-size: 14px;
   font-weight: 400;
   font-style: normal;
+  margin: 20px;
+  margin-bottom: 50px;
 }
 
 #homebutton img {
@@ -284,8 +304,7 @@ ul {
 
 li {
   padding: 8px;
-  margin: 2px 0;
+  margin: 62px 0;
   background-color: #f9f9f9;
   border-radius: 4px;
 }
-  
