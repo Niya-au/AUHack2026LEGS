@@ -92,9 +92,9 @@
                     this.loading = false;
                 }
             },
-            async fetchUserLeaderboard() {
+            async fetchUsers() {
                 try {
-                    const res = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=id.desc&limit=20`, {
                         headers
                     });
                     if (res.ok) this.users = await res.json();
