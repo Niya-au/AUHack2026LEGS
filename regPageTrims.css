@@ -1,65 +1,207 @@
-/*
-body {
-    background-color: black;
-    font-family:'Times New Roman', Times, serif;
-    padding: 20px;
-}
-
 #vueApp {
-    background-color: darkslategray;
-    border-radius: 20px;
-    max-width: 300px;
-    height: auto;
-}
-
-.listView {
-    background-color: darkblue;
-    max-width: 250px;
-    margin: 10px;
-    border-radius: 10px;
-}
-
-.topBtns {
-    display: flexbox;
-    gap: 20px;
-}
-*/
-
-body {
-  font-family: Arial, sans-serif;
-  max-width: 200px;
+  /* div für den gesamten Handyscreen */
+  background-color: #896833;
+  width: 402px;
+  min-height: 800px;
   margin: 0 auto;
-  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  position: relative;
+  /* wichtig! */
 }
+
+/* highlight links */
+#vueApp::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 172px;
+  height: 100%;
+  background: linear-gradient(90deg, #896833 0%, #957238 12%, #ecc990 46%, #ebc78e 53%, #B38D50 75%, #956F32 91%, #896833 100%);
+  filter: blur(20px);
+  /* ← blur hier */
+  z-index: 0;
+}
+
+/* lowlight rechts */
+#vueApp::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 127px;
+  height: 100%;
+  background: linear-gradient(90deg, #896833 0%, #543c15 53%, #896833 100%);
+  filter: blur(20px);
+  /* ← blur hier */
+  z-index: 0;
+}
+
+#firstLeg,
+#OldUser,
+#newUser,
+#confScreen,
+#leaderboard {
+  position: relative;
+  z-index: 1;
+}
+
+/*-------------------------- Opening Link from QR Code ---------------------------*/
+#titleT {
+  font-family: "Alex Brush", cursive;
+  font-size: 64px;
+  font-weight: 400;
+  font-style: normal;
+  color: #f9f9f9;
+  margin-top: 50px;
+  margin-bottom: 0;
+  text-shadow: 1px 4px 4px black;
+  /*x y r c */
+}
+
+#titleL {
+  font-family: "Allerta", sans-serif;
+  font-size: 64px;
+  font-weight: 400;
+  font-style: normal;
+  color: #f9f9f9;
+  margin-top: 0px;
+  margin-bottom: 0;
+  padding-top: 0px;
+  text-shadow: 1px 4px 4px black;
+  /*x y r c */
+}
+
+p {
+  font-family: "Allerta", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  color: #f9f9f9;
+  text-shadow: 1px 2px 2px black;
+  /*x y r c */
+}
+
+#paragraphQ {
+  text-align: center;
+  padding-top: 120px;
+}
+
+#firstLeg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  /* abstand zwischen buttons */
+}
+
+.yesNo {
+  width: 240px;
+  height: 45px;
+  border-radius: 7px;
+  border: transparent;
+  font-family: "Allerta", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  color: #000000;
+
+  margin-bottom: 10px;
+  box-shadow: 1px 2px 2px black;
+}
+
+#leaderboard {
+  width: 110px;
+  height: 30px;
+  border-radius: 6px;
+  border: transparent;
+  font-family: "Allerta", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #A79D7A;
+
+  margin-top: 70px;
+  box-shadow: 1px 2px 2px black;
+}
+
+
+
+
+/*-------------------------- first time user -> yes ---------------------------*/
+
+#newUser {
+  /*div für neue user informationen*/
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#newUser p{
+  text-align: left;
+  width: 240px;
+  margin-bottom: 4px;
+}
+
+#paragraphP {
+  font-size: 37px;
+  margin-top: 120px;
+  margin-bottom: 50px !important;
+  text-align: center !important;
+  
+}
+
 input {
-  padding: 8px;
-  width: 70%;
-  margin: 10px;
+  width: 240px;
+  height: 45px;
+  border-radius: 7px;
+  border: transparent;
+  box-shadow: 1px 2px 2px black;
+  font-family: "Allerta", sans-serif;
+  font-size: 13px;
+  color: #000000;
+  padding-left: 10px;
+
+  
 }
-button {
-  font-weight: bolder;
-  margin: 3px;
-  border-radius: 10px;
-  padding: 8px 16px;
-  background-color: #ffc42f;
-  color: white;
-  border: none;
-  cursor: pointer;
+
+#nextBack{
+  display: flex;
+  flex-direction: row;
+  margin-top: 300px;
+  gap: 20px;
 }
-button:hover {
-  background-color: #ffd468;
+
+.nextBack{
+  width: 110px;
+  height: 30px;
+  border-radius: 6px;
+  border: transparent;
+  font-family: "Allerta", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #A79D7A;
 }
+
+
+
+
+
+
 ul {
   list-style-type: none;
   padding: 0;
 }
+
 li {
   padding: 8px;
   margin: 5px 0;
   background-color: #f9f9f9;
   border-radius: 4px;
 }
-
-#firstLeg {
-  top: 50vh
 }
