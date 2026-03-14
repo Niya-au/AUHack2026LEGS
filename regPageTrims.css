@@ -25,27 +25,28 @@ body {
 }
 */
 
-/* mistrals CSS */
 body {
   font-family: Arial, sans-serif;
-  max-width: 500px;
+  max-width: 200px;
   margin: 0 auto;
   padding: 20px;
 }
 input {
   padding: 8px;
   width: 70%;
-  margin-right: 10px;
+  margin: 10px;
 }
 button {
+  font-weight: bolder;
+  border-radius: 10px;
   padding: 8px 16px;
-  background-color: #4CAF50;
+  background-color: #ffc42f;
   color: white;
   border: none;
   cursor: pointer;
 }
 button:hover {
-  background-color: #45a049;
+  background-color: #ffd468;
 }
 ul {
   list-style-type: none;
@@ -56,4 +57,8 @@ li {
   margin: 5px 0;
   background-color: #f9f9f9;
   border-radius: 4px;
+}
+
+#firstLeg {
+  top: 50vh
 }

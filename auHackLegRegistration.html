@@ -9,7 +9,27 @@
 </head>
 <body>
 
+<!--
+TO DO
+
+Make basic button logic (fx @click or onclick).
+If needed to revert to bare Javascript: remember getdocumentonid
+test outputs using the console - hopefully works.
+
+save nameList separately? maybe
+-->
+
 <div id="vueApp">
+
+    <div v-show="showFirstLeg" id="firstLeg">
+        <h3 style="font-weight: bolder;">
+            Is this your first time taking a leg?
+        </h3>
+    <button @click="go2addName">Yes</button>
+    <button @click="go2Leaderboard">Leaderboard</button>
+    </div>
+
+    <div v-show="showAddName" id="addName">
     <div class="topBtns">
     <input v-model="newName" type="text" placeholder="Enter your Initials!">
     <button @click="addName">Add to Leaderboard</button>
@@ -17,7 +37,29 @@
         <ul class=listView>
             <li v-for="(item, i) in nameList" :key="i">{{ item }}</li>
         </ul>
-    <button @click="clearList">Delete List</button>
+    <button @click="clearList">Wipe Board (not final build!)</button>
+    </div>
+
+    <div v-show="showConfScreen" id="confScreen">
+    <h3>
+        Get ready to Leg!
+    </h3>
+    <p>
+        Speak to the bar personel to begin legging!
+    </p>
+    <button @click="restartFlow">( Regrets? Go back to the beginning )</button>
+    </div>
+
+    <div v-show="showLeaderboard" id="leaderboard">
+    <div class="topBtns">
+    <input v-model="newName" type="text" placeholder="Enter your Initials!">
+    </div>
+        <ul class=listView>
+            <li v-for="(item, i) in nameList" :key="i">{{ item }}</li>
+        </ul>
+    <button @click="clearList">Wipe Board (not final build!)</button>
+    <button @click="restartFlow">Go back</button>
+    </div>
 </div>
 
 
@@ -26,12 +68,20 @@
         data() {
             return {
                 nameList: ['GREG','JANE','LARS'],
-                newName: ''
+                newName: '',
+                showFirstLeg: true,
+                showAddName: false,
+                showConfScreen: false,
+                showLeaderboard: false,
             }
         },
         methods: {
-            addName() {this.nameList.push(this.newName);this.newName = '';},
-            clearList() {this.nameList = [];}
+            addName() {this.nameList.push(this.newName);this.newName = '';this.showAddName = false, this.showConfScreen = true, console.log('pressed btn to got to conf')},
+            clearList() {this.nameList = [];console.log('test list cleared')},
+            go2addName() {this.showFirstLeg = false, this.showAddName = true, console.log('pressed go to add name btn½')},
+            go2Leaderboard() {this.showFirstLeg = false, this.showLeaderboard = true, console.log('pressed leaderboard btn')},
+            restartFlow() {this.showConfScreen = false, this.showLeaderboard = false, this.showFirstLeg = true}
+
         }
     });
     newObj.mount('#vueApp');
