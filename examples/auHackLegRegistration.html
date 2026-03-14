@@ -43,7 +43,7 @@
     <h3>Leaderboard</h3>
     <ul class="listView">
         <li v-for="(row, i) in educationLeaderboard" :key="i">
-            <strong>{{ row.total_a_legs }}</strong> - {{ row.education }}
+            <strong>{{ row.total_legs }}</strong> - {{ row.education }}
         </li>
         <li v-if="educationLeaderboard.length === 0" style="color:#aaa;">No legs yet.</li>
     </ul>
