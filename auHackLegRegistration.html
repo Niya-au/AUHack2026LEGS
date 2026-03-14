@@ -34,8 +34,8 @@ save nameList separately? maybe
     <!---old user-->
     <div v-show="showOldUser" id="OldUser">
     <div class="topBtns">
-    <input v-model="name" type="text" placeholder="Type your Name">
-    <button @click="addOldUser">Add to Leaderboard</button>
+    <input v-model="armUsername" type="text" placeholder="Type your Name">
+    <button @click="armLeg(armUsername)">Add to Leaderboard</button>
     </div>
     </div>
 
@@ -49,11 +49,9 @@ save nameList separately? maybe
     <!---rdy to leg-->
     <div v-show="showConfScreen" id="confScreen">
     <h3>
-        Get ready to Leg!
+        Ready to leg!
     </h3>
-    <p>
-        Speak to the bar personel to begin legging!
-    </p>
+    <p> Talk to the bar staff to begin.</p>
     <button @click="restartFlow">( Regrets? Go back to the beginning )</button>
     </div>
 
@@ -94,6 +92,8 @@ save nameList separately? maybe
                 showNewUser: false,
                 showConfScreen: false,
                 showLeaderboard: false,
+                armUsername: '',
+                armSuccessMessage: ''
             }
         },
         mounted() {this.fetchUsers();},
@@ -119,12 +119,21 @@ save nameList separately? maybe
             },
 
             go2OldUser() {this.showFirstLeg = false, this.showOldUser = true, console.log('=> old user flow')},
-            addOldUser() {this.nameList.push(this.name);this.name = '';this.showOldUser = false, this.showConfScreen = true, console.log('old user => conf')},
+            async armLeg(username) {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/arm_leg`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ p_username: username })
+                });
+                const id = await res.json();
+                this.armSuccessMessage = `Leg armed! ID: ${id}`; console.log('Leg armed!')
+                this.showOldUser = false, this.showConfScreen = true, console.log('old user => conf')
+                },
             
             go2Leaderboard() {this.showFirstLeg = false, this.showLeaderboard = true, console.log('leaderboard btn')},
             clearList() {this.nameList = [];console.log('test list cleared')},
             
-            restartFlow() {this.showConfScreen = false, this.showLeaderboard = false, this.showFirstLeg = true, console.log('restarted flow')}
+            restartFlow() {this.showConfScreen = false, this.showLeaderboard = false, this.showFirstLeg = true, this.armUsername = '', console.log('restarted flow');}
 
         }
     });
