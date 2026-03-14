@@ -4,12 +4,12 @@
 #include <ArduinoJson.h>
 
 // Add your Wi-Fi credentials
-const char* ssid = "YOUR SSID";
-const char* password = "YOUR PASSWORD";
+const char* ssid = "the-leg";
+const char* password = "12345678";
 
 // Supabase credentials
 const char* supabaseUrl = "https://sefoaaasnyorakarqsrm.supabase.co";
-const char* supabaseKey = "SUPABASE_ANON_KEY";
+const char* supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlZm9hYWFzbnlvcmFrYXJxc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MTE2NDYsImV4cCI6MjA4ODk4NzY0Nn0.mfGpP7xW3b5rHXFtck1ujOGvyHUbiMaWoN8vhdru8Vg";
 
 // How often to poll (ms)
 const unsigned long POLL_INTERVAL = 3000;
@@ -24,7 +24,10 @@ bool checkArmedLeg(long& out_id, String& out_username) {
   http.begin(url);
   http.addHeader("apikey", supabaseKey);
   http.addHeader("Authorization", String("Bearer ") + supabaseKey);
-  int httpCode = http.GET();
+  http.addHeader("Content-Type", "application/json");
+
+  // RPC with no arguments still needs an empty JSON body on POST
+  int httpCode = http.POST("{}");
 
   if (httpCode != 200) {
     Serial.printf("Poll failed, HTTP %d\n", httpCode);
@@ -48,26 +51,22 @@ bool checkArmedLeg(long& out_id, String& out_username) {
   return true;
 }
 
-// Submit the measured time via RPC — updates whichever row currently has time=NULL.
-// Robust against re-arming: if the leg was re-armed between poll and submit,
-// the new armed row gets the time instead of failing silently.
-bool submitTime(long timeMs) {
+// Insert the measured time for the armed leg row (finishes the run)
+bool submitTime(long rowId, long timeMs) {
   HTTPClient http;
-  String url = String(supabaseUrl) + "/rest/v1/rpc/submit_leg_time";
+  String url = String(supabaseUrl) + "/rest/v1/a_leg?id=eq." + String(rowId);
 
   http.begin(url);
   http.addHeader("apikey", supabaseKey);
   http.addHeader("Authorization", String("Bearer ") + supabaseKey);
   http.addHeader("Content-Type", "application/json");
+  http.addHeader("Prefer", "return=minimal");
 
-  String body = String("{\"p_time\":") + timeMs + "}";
-  int httpCode = http.POST(body);
+  String body = String("{\"time\":") + timeMs + "}";
+  int httpCode = http.sendRequest("PATCH", body);
 
-  String payload = http.getString();
   http.end();
-
-  // RPC returns true if a row was updated, false if no armed leg existed anymore
-  return (httpCode == 200 && payload == "true");
+  return (httpCode == 200 || httpCode == 204);
 }
 
 void setup() {
@@ -95,7 +94,7 @@ void loop() {
     // TODO: replace this with your actual sensor measurement
     long measuredTimeMs = 1234;
 
-    if (submitTime(measuredTimeMs)) {
+    if (submitTime(armedId, measuredTimeMs)) {
       Serial.printf("Time submitted: %ldms\n", measuredTimeMs);
     } else {
       Serial.println("Failed to submit time.");
