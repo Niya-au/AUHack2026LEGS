@@ -6,11 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AUHack Leg Demo</title>
+    <style>
+        .query-builder { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+        .query-builder label { font-size: 0.85em; color: #555; display: block; margin-bottom: 2px; }
+        .query-builder input { width: 100%; font-family: monospace; margin-bottom: 8px; padding: 4px 6px; }
+        .query-url { font-family: monospace; font-size: 0.8em; color: #888; word-break: break-all; margin-bottom: 8px; }
+        .query-result { background: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 0.8em; padding: 12px; border-radius: 6px; white-space: pre; overflow-x: auto; max-height: 300px; overflow-y: auto; }
+    </style>
 </head>
 <body>
 
 <div style="margin-bottom: 16px;">
-    <a href="auHackLegPlayground.html"><button>Go to Playground</button></a>
+    <a href="auHackLegRegistration.html"><button>Go to Demo</button></a>
 </div>
 
 <div id="vueApp">
@@ -30,29 +37,47 @@
     <hr>
 
     <h2>All Users</h2>
-    <ul class="listView">
-        <li v-for="(user, i) in users" :key="i"><strong>{{ user.username }}</strong> — {{ user.education }}</li>
-        <li v-if="users.length === 0" style="color:#aaa;">No users yet.</li>
-    </ul>
-    <button @click="fetchUsers">Refresh</button>
+    <div class="query-builder">
+        <label>select — which columns to return (e.g. <code>*</code> for all, or <code>username,education</code>)</label>
+        <input v-model="usersParams.select" type="text">
+        <label>order — sort by column (e.g. <code>id.desc</code> or <code>username.asc</code>)</label>
+        <input v-model="usersParams.order" type="text">
+        <label>limit — max number of rows to return</label>
+        <input v-model="usersParams.limit" type="text">
+        <div class="query-url">{{ usersUrl }}</div>
+        <button @click="fetchUsers">Run</button>
+    </div>
+    <div class="query-result">{{ JSON.stringify(users, null, 2) }}</div>
 
     <hr>
 
     <h2>Education Leaderboard</h2>
-    <ul class="listView">
-        <li v-for="(row, i) in educationLeaderboard" :key="i"><strong>{{ row.total_legs }}</strong> — {{ row.education }}</li>
-        <li v-if="educationLeaderboard.length === 0" style="color:#aaa;">No legs yet.</li>
-    </ul>
-    <button @click="fetchEducationLeaderboard">Refresh</button>
+    <div class="query-builder">
+        <label>select — which columns to return</label>
+        <input v-model="eduParams.select" type="text">
+        <label>order — sort by column (e.g. <code>total_legs.desc</code>)</label>
+        <input v-model="eduParams.order" type="text">
+        <label>limit — max number of rows to return</label>
+        <input v-model="eduParams.limit" type="text">
+        <div class="query-url">{{ eduUrl }}</div>
+        <button @click="fetchEducationLeaderboard">Run</button>
+    </div>
+    <div class="query-result">{{ JSON.stringify(educationLeaderboard, null, 2) }}</div>
 
     <hr>
 
     <h2>User Leaderboard</h2>
-    <ul class="listView">
-        <li v-for="(row, i) in userLeaderboard" :key="i"><strong>{{ row.total_legs }}</strong> — {{ row.username }} ({{ row.education }})</li>
-        <li v-if="userLeaderboard.length === 0" style="color:#aaa;">No legs yet.</li>
-    </ul>
-    <button @click="fetchUserLeaderboard">Refresh</button>
+    <div class="query-builder">
+        <label>select — which columns to return</label>
+        <input v-model="userLbParams.select" type="text">
+        <label>order — sort by column (e.g. <code>total_legs.desc</code>)</label>
+        <input v-model="userLbParams.order" type="text">
+        <label>limit — max number of rows to return</label>
+        <input v-model="userLbParams.limit" type="text">
+        <div class="query-url">{{ userLbUrl }}</div>
+        <button @click="fetchUserLeaderboard">Run</button>
+    </div>
+    <div class="query-result">{{ JSON.stringify(userLeaderboard, null, 2) }}</div>
 
     <hr>
 
@@ -77,6 +102,14 @@
         'Prefer': 'return=representation'
     };
 
+    // Builds a query string from a params object, skipping any empty values
+    function buildQuery(params) {
+        return Object.entries(params)
+            .filter(([, v]) => v)
+            .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+            .join('&');
+    }
+
     Vue.createApp({
         data() {
             return {
@@ -88,8 +121,16 @@
                 statusMsg: '',
                 statusClass: '',
                 armUsername: '',
-                armSuccessMessage: ''
+                armSuccessMessage: '',
+                usersParams:  { select: '*', order: 'id.desc', limit: '3' },
+                eduParams:    { select: '*', order: 'total_legs.desc', limit: '' },
+                userLbParams: { select: '*', order: 'total_legs.desc', limit: '3' },
             };
+        },
+        computed: {
+            usersUrl()  { return `${SUPABASE_URL}/rest/v1/users?${buildQuery(this.usersParams)}`; },
+            eduUrl()    { return `${SUPABASE_URL}/rest/v1/education_leg_counts?${buildQuery(this.eduParams)}`; },
+            userLbUrl() { return `${SUPABASE_URL}/rest/v1/user_legs_leaderboard?${buildQuery(this.userLbParams)}`; },
         },
         mounted() {
             this.fetchUsers();
@@ -132,18 +173,15 @@
                 this.armSuccessMessage = `Leg armed! ID: ${id}`;
             },
             async fetchUsers() {
-                // Fetch the most recently registered users from the database
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=id.desc&limit=3`, { headers });
+                const res = await fetch(this.usersUrl, { headers });
                 if (res.ok) this.users = await res.json();
             },
             async fetchEducationLeaderboard() {
-                // Fetch pre-calculated leg totals grouped by education
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/education_leg_counts?select=*`, { headers });
+                const res = await fetch(this.eduUrl, { headers });
                 if (res.ok) this.educationLeaderboard = await res.json();
             },
             async fetchUserLeaderboard() {
-                // Fetch pre-calculated leg totals per user
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/user_legs_leaderboard?select=*&limit=3`, { headers });
+                const res = await fetch(this.userLbUrl, { headers });
                 if (res.ok) this.userLeaderboard = await res.json();
             },
             setStatus(msg, type) {
