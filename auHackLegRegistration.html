@@ -6,6 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leg Leaderboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"> <!---NEW-->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <!---NEW-->
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=UnifrakturMaguntia&display=swap"
+        rel="stylesheet"> <!---NEW-->
 </head>
 <body>
 
@@ -23,12 +27,12 @@ save nameList separately? maybe
 
     <!---first screen-->
     <div v-show="showFirstLeg" id="firstLeg">
-        <h3 style="font-weight: bolder;">
-            Is this your first time taking a leg?
-        </h3>
-    <button @click="go2NewUser">Yes</button>
-    <button @click="go2OldUser">No</button>
-    <button @click="go2Leaderboard">Show Leaderboard</button>
+        <h1 id="titleT">Thomas the</h1> <!---NEW-->
+            <h2 id="titleL">LEG - end</h2> <!---NEW-->
+            <p id="paragraphQ">Is this your first time taking a leg?</p> <!---NEW-->
+    <button class="yesNo" @click="go2NewUser">yes</button>
+    <button class="yesNo" @click="go2OldUser">no</button>
+    <button id="leaderboard" @click="go2Leaderboard">leaderboard</button> <!---NEW-->
     </div>
 
     <!---old user-->
@@ -40,11 +44,18 @@ save nameList separately? maybe
     </div>
 
     <!---new user-->
-    <div v-show="showNewUser" id="newUser">
-        <input v-model="form.education" type="text" placeholder="Enter Education">
-        <input v-model="form.username" type="text" placeholder="Enter Name">
-        <button @click="addNewUser">Add your education and name</button>
-    </div>
+            <div v-show="showNewUser" id="newUser">
+            <p id="paragraphP">Create a New <br>USER Profile</p> <!---NEW-->
+            <p>What are you studying?</p> <!---NEW-->
+            <input v-model="form.education" type="text" placeholder="enter education"> <!---NEW-->
+            <p>Choose a username:</p> <!---NEW-->
+            <input v-model="form.username" type="text" placeholder="enter name"> <!---NEW-->
+
+            <div id="nextBack"> <!---NEW-->
+                <button class="nextBack" @click="restartFlow">back</button> <!---NEW-->
+                <button class="nextBack" @click="addNewUser">next</button> <!---NEW-->
+            </div>
+        </div>
 
     <!---rdy to leg-->
     <div v-show="showConfScreen" id="confScreen">
@@ -133,7 +144,17 @@ save nameList separately? maybe
             go2Leaderboard() {this.showFirstLeg = false, this.showLeaderboard = true, console.log('leaderboard btn')},
             clearList() {this.nameList = [];console.log('test list cleared')},
             
-            restartFlow() {this.showConfScreen = false, this.showLeaderboard = false, this.showFirstLeg = true, this.armUsername = '', console.log('restarted flow');}
+            restartFlow() {
+                    this.showConfScreen = false;
+                    this.showLeaderboard = false;
+                    this.showNewUser = false; //new
+                    this.showOldUser = false; //new
+                    this.showFirstLeg = true;
+                    this.armUsername = '';
+                    this.newName = ''; //new
+                    this.newFaculty = ''; //new
+                    console.log('restarted flow');
+                }
 
         }
     });
