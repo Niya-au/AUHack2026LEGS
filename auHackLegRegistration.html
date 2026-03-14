@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="regPageTrims.css">
@@ -11,9 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=UnifrakturMaguntia&display=swap"
         rel="stylesheet"> <!---NEW-->
 </head>
+
 <body>
 
-<!--
+    <!--
 TO DO
 
 Make basic button logic (fx @click or onclick).
@@ -23,29 +25,35 @@ test outputs using the console - hopefully works.
 save nameList separately? maybe
 -->
 
-<div id="vueApp">
+    <div id="vueApp">
 
-    <!---first screen-->
-    <div v-show="showFirstLeg" id="firstLeg">
-        <h1 id="titleT">Thomas the</h1> <!---NEW-->
+        <!---first screen-->
+        <div v-show="showFirstLeg" id="firstLeg">
+            <h1 id="titleT">Thomas the</h1> <!---NEW-->
             <h2 id="titleL">LEG - end</h2> <!---NEW-->
             <p id="paragraphQ">Is this your first time taking a leg?</p> <!---NEW-->
-    <button class="yesNo" @click="go2NewUser">yes</button>
-    <button class="yesNo" @click="go2OldUser">no</button>
-    <button id="leaderboard" @click="go2Leaderboard">leaderboard</button> <!---NEW-->
-    </div>
+            <button class="yesNo" @click="go2NewUser">yes</button>
+            <button class="yesNo" @click="go2OldUser">no</button>
+            <button class="leaderboard" @click="go2Leaderboard">leaderboard</button> <!---NEW-->
+        </div>
 
-    <!---old user-->
-    <div v-show="showOldUser" id="OldUser">
-    <div class="topBtns">
-    <input v-model="armUsername" type="text" placeholder="Type your Name">
-    <button @click="armLeg(armUsername)">Add to Leaderboard</button>
-    </div>
-    </div>
+        <!---old user-->
+        <div v-show="showOldUser" id="OldUser">
 
-    <!---new user-->
-            <div v-show="showNewUser" id="newUser">
-            <p id="paragraphP">Create a New <br>USER Profile</p> <!---NEW-->
+            <div class="topBtns">
+                <p class="paragraphP">Type in your <br>USERNAME</p>
+                <p>Username:</p>
+                <input v-model="armUsername" type="text" placeholder="type your name">
+                <div id="nextBack"> <!---NEW-->
+                    <button class="nextBack" @click="restartFlow">back</button> <!---NEW-->
+                    <button class="nextBack" @click="armLeg(armUsername)">next</button> <!---NEW-->
+                </div>
+            </div>
+        </div>
+
+        <!---new user-->
+        <div v-show="showNewUser" id="newUser">
+            <p class="paragraphP">Create a New <br>USER Profile</p> <!---NEW-->
             <p>What are you studying?</p> <!---NEW-->
             <input v-model="form.education" type="text" placeholder="enter education"> <!---NEW-->
             <p>Choose a username:</p> <!---NEW-->
@@ -57,94 +65,94 @@ save nameList separately? maybe
             </div>
         </div>
 
-    <!---rdy to leg-->
-    <div v-show="showConfScreen" id="confScreen">
-    <h3>
-        Ready to leg!
-    </h3>
-    <p> Talk to the bar staff to begin.</p>
-    <button @click="restartFlow">( Regrets? Go back to the beginning )</button>
+        <!---CONF-->
+        <div v-show="showConfScreen" id="confScreen">
+            <p class="paragraphP" id="bigText" >You have been <br> registered <br> successfully!</p>
+            <p> Await further instructions from <br> the bar personal</p>
+            <button class="leaderboard" @click="go2Leaderboard">leaderboard</button> <!---NEW-->
+        </div>
+
+        <!---leaderboard-->
+        <div v-show="showLeaderboard" id="leaderboard">
+            <div class="topBtns">
+            </div>
+            <ul class=listView>
+                <li v-for="(user, i) in users" :key="i">
+                    <strong>{{ user.username }}</strong> <br> {{ user.education }}
+                </li>
+            </ul>
+            <button @click="clearList">Wipe Board (not final build!)</button>
+            <button @click="restartFlow">Go back</button>
+        </div>
     </div>
 
-    <!---leaderboard-->
-    <div v-show="showLeaderboard" id="leaderboard">
-    <div class="topBtns">
-    </div>
-        <ul class=listView>
-            <li v-for="(user, i) in users" :key="i">
-                <strong>{{ user.username }}</strong> <br> {{ user.education }}
-            </li>
-        </ul>
-    <button @click="clearList">Wipe Board (not final build!)</button>
-    <button @click="restartFlow">Go back</button>
-    </div>
-</div>
 
+    <script>
 
-<script>
+        const SUPABASE_URL = 'https://sefoaaasnyorakarqsrm.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlZm9hYWFzbnlvcmFrYXJxc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MTE2NDYsImV4cCI6MjA4ODk4NzY0Nn0.mfGpP7xW3b5rHXFtck1ujOGvyHUbiMaWoN8vhdru8Vg'; // ← paste your anon/public key
 
-    const SUPABASE_URL = 'https://sefoaaasnyorakarqsrm.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlZm9hYWFzbnlvcmFrYXJxc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MTE2NDYsImV4cCI6MjA4ODk4NzY0Nn0.mfGpP7xW3b5rHXFtck1ujOGvyHUbiMaWoN8vhdru8Vg'; // ← paste your anon/public key
+        const headers = {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'return=representation'
+        };
 
-    const headers = {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Prefer': 'return=representation'
-    };
-
-    const newObj = Vue.createApp({
-        data() {
-            return {
-                form: {username:'',education:''},
-                users: [],
-                showFirstLeg: true,
-                showOldUser: false,
-                showNewUser: false,
-                showConfScreen: false,
-                showLeaderboard: false,
-                armUsername: '',
-                armSuccessMessage: ''
-            }
-        },
-        mounted() {this.fetchUsers();},
-        methods: {
-            go2NewUser() {this.showFirstLeg = false, this.showNewUser = true, console.log('went2new user flow')},
-            async addNewUser() {const res = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+        const newObj = Vue.createApp({
+            data() {
+                return {
+                    form: { username: '', education: '' },
+                    users: [],
+                    showFirstLeg: true,
+                    showOldUser: false,
+                    showNewUser: false,
+                    showConfScreen: false,
+                    showLeaderboard: false,
+                    armUsername: '',
+                    armSuccessMessage: ''
+                }
+            },
+            mounted() { this.fetchUsers(); },
+            methods: {
+                go2NewUser() { this.showFirstLeg = false, this.showNewUser = true, console.log('went2new user flow') },
+                async addNewUser() {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
                         method: 'POST',
                         headers,
                         body: JSON.stringify(this.form)
-                        });
-                        this.form = { username: '', education: '' };
-                        await this.fetchUsers();
-                        this.showNewUser = false, this.showConfScreen = true, console.log('submit user => conf')},
-            async fetchUsers() {
-                try {
-                    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=id.desc&limit=20`, {
-                        headers
                     });
-                    if (res.ok) this.users = await res.json();
-                } catch (e) {
-                    console.error('Failed to fetch users:', e);
-                }
-            },
-
-            go2OldUser() {this.showFirstLeg = false, this.showOldUser = true, console.log('=> old user flow')},
-            async armLeg(username) {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/arm_leg`, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({ p_username: username })
-                });
-                const id = await res.json();
-                this.armSuccessMessage = `Leg armed! ID: ${id}`; console.log('Leg armed!')
-                this.showOldUser = false, this.showConfScreen = true, console.log('old user => conf')
+                    this.form = { username: '', education: '' };
+                    await this.fetchUsers();
+                    this.showNewUser = false, this.showConfScreen = true, console.log('submit user => conf')
                 },
-            
-            go2Leaderboard() {this.showFirstLeg = false, this.showLeaderboard = true, console.log('leaderboard btn')},
-            clearList() {this.nameList = [];console.log('test list cleared')},
-            
-            restartFlow() {
+                async fetchUsers() {
+                    try {
+                        const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=id.desc&limit=20`, {
+                            headers
+                        });
+                        if (res.ok) this.users = await res.json();
+                    } catch (e) {
+                        console.error('Failed to fetch users:', e);
+                    }
+                },
+
+                go2OldUser() { this.showFirstLeg = false, this.showOldUser = true, console.log('=> old user flow') },
+                async armLeg(username) {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/arm_leg`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({ p_username: username })
+                    });
+                    const id = await res.json();
+                    this.armSuccessMessage = `Leg armed! ID: ${id}`; console.log('Leg armed!')
+                    this.showOldUser = false, this.showConfScreen = true, console.log('old user => conf')
+                },
+
+                go2Leaderboard() {this.showConfScreen = false, this.showFirstLeg = false, this.showLeaderboard = true, console.log('leaderboard btn') },
+                clearList() { this.nameList = []; console.log('test list cleared') },
+
+                restartFlow() {
                     this.showConfScreen = false;
                     this.showLeaderboard = false;
                     this.showNewUser = false; //new
@@ -156,10 +164,11 @@ save nameList separately? maybe
                     console.log('restarted flow');
                 }
 
-        }
-    });
-    newObj.mount('#vueApp');
-</script>
+            }
+        });
+        newObj.mount('#vueApp');
+    </script>
 
 </body>
+
 </html>
