@@ -67,22 +67,31 @@ save nameList separately? maybe
 
         <!---CONF-->
         <div v-show="showConfScreen" id="confScreen">
-            <p class="paragraphP" id="bigText" >You have been <br> registered <br> successfully!</p>
+            <p class="paragraphP" id="bigText">You have been <br> registered <br> successfully!</p>
             <p> Await further instructions from <br> the bar personal</p>
             <button class="leaderboard" @click="go2Leaderboard">leaderboard</button> <!---NEW-->
         </div>
 
         <!---leaderboard-->
         <div v-show="showLeaderboard" id="leaderboard">
-            <div class="topBtns">
+
+            <p class="paragraphP">Leaderboard</p>
+
+            <div id="leaderboardWhitePart">
+                <ul class=listView>
+                    <li v-for="(user, i) in users" :key="i">
+                        <strong>{{ user.username }}</strong> <br> {{ user.education }}
+                    </li>
+                </ul>
             </div>
-            <ul class=listView>
-                <li v-for="(user, i) in users" :key="i">
-                    <strong>{{ user.username }}</strong> <br> {{ user.education }}
-                </li>
-            </ul>
-            <button @click="clearList">Wipe Board (not final build!)</button>
-            <button @click="restartFlow">Go back</button>
+
+
+            <!--<button @click="clearList">Wipe Board (not final build!)</button>-->
+            <div id="homebutton">
+            <img src="https://uxwing.com/wp-content/themes/uxwing/download/web-app-development/home-page-white-icon.png"
+                @click="restartFlow" id="backButton">
+                </div>
+
         </div>
     </div>
 
@@ -149,7 +158,7 @@ save nameList separately? maybe
                     this.showOldUser = false, this.showConfScreen = true, console.log('old user => conf')
                 },
 
-                go2Leaderboard() {this.showConfScreen = false, this.showFirstLeg = false, this.showLeaderboard = true, console.log('leaderboard btn') },
+                go2Leaderboard() { this.showConfScreen = false, this.showFirstLeg = false, this.showLeaderboard = true, console.log('leaderboard btn') },
                 clearList() { this.nameList = []; console.log('test list cleared') },
 
                 restartFlow() {
