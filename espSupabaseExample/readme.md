@@ -11,13 +11,12 @@
 
 ### Poll for armed leg
 
-**POST** `/rest/v1/rpc/is_leg_armed`
+**GET** `/rest/v1/rpc/is_leg_armed`
 
 Returns an empty array if no leg is armed, or the row if one is waiting.
 
 ```
-POST https://sefoaaasnyorakarqsrm.supabase.co/rest/v1/rpc/is_leg_armed
-Body: {}
+GET https://sefoaaasnyorakarqsrm.supabase.co/rest/v1/rpc/is_leg_armed
 ```
 
 Response (armed):

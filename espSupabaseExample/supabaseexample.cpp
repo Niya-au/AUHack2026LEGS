@@ -24,10 +24,7 @@ bool checkArmedLeg(long& out_id, String& out_username) {
   http.begin(url);
   http.addHeader("apikey", supabaseKey);
   http.addHeader("Authorization", String("Bearer ") + supabaseKey);
-  http.addHeader("Content-Type", "application/json");
-
-  // RPC with no arguments still needs an empty JSON body on POST
-  int httpCode = http.POST("{}");
+  int httpCode = http.GET();
 
   if (httpCode != 200) {
     Serial.printf("Poll failed, HTTP %d\n", httpCode);
