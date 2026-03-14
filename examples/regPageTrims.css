@@ -1,0 +1,82 @@
+/*
+body {
+    background-color: black;
+    font-family:'Times New Roman', Times, serif;
+    padding: 20px;
+}
+
+#vueApp {
+    background-color: darkslategray;
+    border-radius: 20px;
+    max-width: 300px;
+    height: auto;
+}
+
+.listView {
+    background-color: darkblue;
+    max-width: 250px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.topBtns {
+    display: flexbox;
+    gap: 20px;
+}
+*/
+
+/* mistrals CSS */
+body {
+  font-family: Arial, sans-serif;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+input {
+  padding: 8px;
+  width: 70%;
+  margin-right: 10px;
+}
+button {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  padding: 8px;
+  margin: 5px 0;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+.form-group {
+  margin-bottom: 14px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+.form-group input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.success {
+  color: #2e7d32;
+  font-weight: bold;
+}
+.error {
+  color: #c62828;
+  font-weight: bold;
+}
+hr {
+  margin: 20px 0;
+}

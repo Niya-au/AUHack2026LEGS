@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="regPageTrims.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+</head>
+<body>
+
+<div id="vueApp">
+    <h2>Register User</h2>
+
+    <div class="form-group">
+        <label>Username</label>
+        <input v-model="form.username" type="text" placeholder="Jens jensen">
+    </div>
+
+    <div class="form-group">
+        <label>Education</label>
+        <input v-model="form.education" type="text" placeholder="Maskineteknik">
+    </div>
+
+    <div class="form-group">
+        <button @click="submitUser" :disabled="loading">
+            {{ loading ? 'Submitting...' : 'Register' }}
+        </button>
+    </div>
+
+    <p v-if="statusMsg" :class="statusClass">{{ statusMsg }}</p>
+
+    <hr>
+    <h3>Registered Users</h3>
+    <ul class="listView">
+        <li v-for="(user, i) in users" :key="i">
+            <strong>{{ user.username }}</strong> — {{ user.education }}
+        </li>
+        <li v-if="users.length === 0" style="color:#aaa;">No users yet.</li>
+    </ul>
+    <button @click="fetchUsers" style="background:#2196F3;">Refresh List</button>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://sefoaaasnyorakarqsrm.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlZm9hYWFzbnlvcmFrYXJxc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MTE2NDYsImV4cCI6MjA4ODk4NzY0Nn0.mfGpP7xW3b5rHXFtck1ujOGvyHUbiMaWoN8vhdru8Vg'; // ← paste your anon/public key
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer': 'return=representation'
+    };
+
+    Vue.createApp({
+        data() {
+            return {
+                form: { username: '', education: '' },
+                users: [],
+                loading: false,
+                statusMsg: '',
+                statusClass: ''
+            };
+        },
+        mounted() {
+            this.fetchUsers();
+        },
+        methods: {
+            async submitUser() {
+                if (!this.form.username || !this.form.education) {
+                    this.setStatus('Please fill in all fields.', 'error');
+                    return;
+                }
+                this.loading = true;
+                this.statusMsg = '';
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(this.form)
+                    });
+                    if (!res.ok) {
+                        const err = await res.json();
+                        throw new Error(err.message || 'Insert failed');
+                    }
+                    this.setStatus('User registered successfully!', 'success');
+                    this.form = { username: '', education: '' };
+                    await this.fetchUsers();
+                } catch (e) {
+                    this.setStatus(`Error: ${e.message}`, 'error');
+                } finally {
+                    this.loading = false;
+                }
+            },
+            async fetchUserLeaderboard() {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+                        headers
+                    });
+                    if (res.ok) this.users = await res.json();
+                } catch (e) {
+                    console.error('Failed to fetch users:', e);
+                }
+            },
+            setStatus(msg, type) {
+                this.statusMsg = msg;
+                this.statusClass = type;
+            }
+        }
+    }).mount('#vueApp');
+</script>
+
+</body>
+</html>
