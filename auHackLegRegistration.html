@@ -21,25 +21,32 @@ save nameList separately? maybe
 
 <div id="vueApp">
 
+    <!---first screen-->
     <div v-show="showFirstLeg" id="firstLeg">
         <h3 style="font-weight: bolder;">
             Is this your first time taking a leg?
         </h3>
-    <button @click="go2addName">Yes</button>
-    <button @click="go2Leaderboard">Leaderboard</button>
+    <button @click="go2NewUser">Yes</button>
+    <button @click="go2OldUser">No</button>
+    <button @click="go2Leaderboard">Show Leaderboard</button>
     </div>
 
-    <div v-show="showAddName" id="addName">
+    <!---old user-->
+    <div v-show="showOldUser" id="OldUser">
     <div class="topBtns">
-    <input v-model="newName" type="text" placeholder="Enter your Initials!">
-    <button @click="addName">Add to Leaderboard</button>
+    <input v-model="newName" type="text" placeholder="Type your Name">
+    <button @click="addOldUser">Add to Leaderboard</button>
     </div>
-        <ul class=listView>
-            <li v-for="(item, i) in nameList" :key="i">{{ item }}</li>
-        </ul>
-    <button @click="clearList">Wipe Board (not final build!)</button>
     </div>
 
+    <!---new user-->
+    <div v-show="showNewUser" id="newUser">
+        <input v-model="newFaculty" type="text" placeholder="Enter Faculty">
+        <input v-model="newName" type="text" placeholder="Enter Name">
+        <button @click="addNewUser">Add faculty and name</button>
+    </div>
+
+    <!---rdy to leg-->
     <div v-show="showConfScreen" id="confScreen">
     <h3>
         Get ready to Leg!
@@ -50,9 +57,9 @@ save nameList separately? maybe
     <button @click="restartFlow">( Regrets? Go back to the beginning )</button>
     </div>
 
+    <!---leaderboard-->
     <div v-show="showLeaderboard" id="leaderboard">
     <div class="topBtns">
-    <input v-model="newName" type="text" placeholder="Enter your Initials!">
     </div>
         <ul class=listView>
             <li v-for="(item, i) in nameList" :key="i">{{ item }}</li>
@@ -67,20 +74,28 @@ save nameList separately? maybe
     const newObj = Vue.createApp({
         data() {
             return {
+                facultyList: [],
+                newFaculty: '',
                 nameList: ['GREG','JANE','LARS'],
                 newName: '',
                 showFirstLeg: true,
-                showAddName: false,
+                showOldUser: false,
+                showNewUser: false,
                 showConfScreen: false,
                 showLeaderboard: false,
             }
         },
         methods: {
-            addName() {this.nameList.push(this.newName);this.newName = '';this.showAddName = false, this.showConfScreen = true, console.log('pressed btn to got to conf')},
+            go2NewUser() {this.showFirstLeg = false, this.showNewUser = true, console.log('went2new user flow')},
+            addNewUser() {this.facultyList.push(this.newFaculty), newFaculty = '', this.nameList.push(this.newName);this.newName = ''; this.showNewUser = false, this.showConfScreen = true, console.log('old user => conf' + this.facultyList + this.nameList)},
+            
+            go2OldUser() {this.showFirstLeg = false, this.showOldUser = true, console.log('=> old user flow')},
+            addOldUser() {this.nameList.push(this.newName);this.newName = '';this.showOldUser = false, this.showConfScreen = true, console.log('old user => conf')},
+            
+            go2Leaderboard() {this.showFirstLeg = false, this.showLeaderboard = true, console.log('leaderboard btn')},
             clearList() {this.nameList = [];console.log('test list cleared')},
-            go2addName() {this.showFirstLeg = false, this.showAddName = true, console.log('pressed go to add name btn½')},
-            go2Leaderboard() {this.showFirstLeg = false, this.showLeaderboard = true, console.log('pressed leaderboard btn')},
-            restartFlow() {this.showConfScreen = false, this.showLeaderboard = false, this.showFirstLeg = true}
+            
+            restartFlow() {this.showConfScreen = false, this.showLeaderboard = false, this.showFirstLeg = true, console.log('restarted flow')}
 
         }
     });
