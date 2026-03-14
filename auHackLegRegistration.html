@@ -137,7 +137,7 @@ save nameList separately? maybe
                 },
                 async fetchUsers() {
                     try {
-                        const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=id.desc&limit=20`, {
+                        const res = await fetch(`${SUPABASE_URL}/rest/v1/user_legs_leaderboard?select=*&order=total_legs.desc&limit=5`, {
                             headers
                         });
                         if (res.ok) this.users = await res.json();
