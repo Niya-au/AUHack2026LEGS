@@ -34,16 +34,16 @@ save nameList separately? maybe
     <!---old user-->
     <div v-show="showOldUser" id="OldUser">
     <div class="topBtns">
-    <input v-model="newName" type="text" placeholder="Type your Name">
+    <input v-model="name" type="text" placeholder="Type your Name">
     <button @click="addOldUser">Add to Leaderboard</button>
     </div>
     </div>
 
     <!---new user-->
     <div v-show="showNewUser" id="newUser">
-        <input v-model="newFaculty" type="text" placeholder="Enter Faculty">
-        <input v-model="newName" type="text" placeholder="Enter Name">
-        <button @click="addNewUser">Add faculty and name</button>
+        <input v-model="form.education" type="text" placeholder="Enter Education">
+        <input v-model="form.username" type="text" placeholder="Enter Name">
+        <button @click="addNewUser">Add your education and name</button>
     </div>
 
     <!---rdy to leg-->
@@ -62,7 +62,9 @@ save nameList separately? maybe
     <div class="topBtns">
     </div>
         <ul class=listView>
-            <li v-for="(item, i) in nameList" :key="i">{{ item }}</li>
+            <li v-for="(user, i) in users" :key="i">
+                <strong>{{ user.username }}</strong> <br> {{ user.education }}
+            </li>
         </ul>
     <button @click="clearList">Wipe Board (not final build!)</button>
     <button @click="restartFlow">Go back</button>
@@ -71,13 +73,22 @@ save nameList separately? maybe
 
 
 <script>
+
+    const SUPABASE_URL = 'https://sefoaaasnyorakarqsrm.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlZm9hYWFzbnlvcmFrYXJxc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MTE2NDYsImV4cCI6MjA4ODk4NzY0Nn0.mfGpP7xW3b5rHXFtck1ujOGvyHUbiMaWoN8vhdru8Vg'; // ← paste your anon/public key
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer': 'return=representation'
+    };
+
     const newObj = Vue.createApp({
         data() {
             return {
-                facultyList: [],
-                newFaculty: '',
-                nameList: ['GREG','JANE','LARS'],
-                newName: '',
+                form: {username:'',education:''},
+                users: [],
                 showFirstLeg: true,
                 showOldUser: false,
                 showNewUser: false,
@@ -85,12 +96,30 @@ save nameList separately? maybe
                 showLeaderboard: false,
             }
         },
+        mounted() {this.fetchUsers();},
         methods: {
             go2NewUser() {this.showFirstLeg = false, this.showNewUser = true, console.log('went2new user flow')},
-            addNewUser() {this.facultyList.push(this.newFaculty), newFaculty = '', this.nameList.push(this.newName);this.newName = ''; this.showNewUser = false, this.showConfScreen = true, console.log('old user => conf' + this.facultyList + this.nameList)},
-            
+            async addNewUser() {const res = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(this.form)
+                        });
+                        this.form = { username: '', education: '' };
+                        await this.fetchUsers();
+                        this.showNewUser = false, this.showConfScreen = true, console.log('submit user => conf')},
+            async fetchUsers() {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=id.desc&limit=20`, {
+                        headers
+                    });
+                    if (res.ok) this.users = await res.json();
+                } catch (e) {
+                    console.error('Failed to fetch users:', e);
+                }
+            },
+
             go2OldUser() {this.showFirstLeg = false, this.showOldUser = true, console.log('=> old user flow')},
-            addOldUser() {this.nameList.push(this.newName);this.newName = '';this.showOldUser = false, this.showConfScreen = true, console.log('old user => conf')},
+            addOldUser() {this.nameList.push(this.name);this.name = '';this.showOldUser = false, this.showConfScreen = true, console.log('old user => conf')},
             
             go2Leaderboard() {this.showFirstLeg = false, this.showLeaderboard = true, console.log('leaderboard btn')},
             clearList() {this.nameList = [];console.log('test list cleared')},
