@@ -34,11 +34,30 @@
     <h3>Registered Users</h3>
     <ul class="listView">
         <li v-for="(user, i) in users" :key="i">
-            <strong>{{ user.username }}</strong> — {{ user.education }}
+            <strong>{{ user.username }}</strong> - {{ user.education }}
         </li>
         <li v-if="users.length === 0" style="color:#aaa;">No users yet.</li>
     </ul>
     <button @click="fetchUsers" style="background:#2196F3;">Refresh List</button>
+
+    <h3>Leaderboard</h3>
+    <ul class="listView">
+        <li v-for="(row, i) in educationLeaderboard" :key="i">
+            <strong>{{ row.total_a_legs }}</strong> - {{ row.education }}
+        </li>
+        <li v-if="educationLeaderboard.length === 0" style="color:#aaa;">No legs yet.</li>
+    </ul>
+    <button @click="fetchEducationLeaderboard" style="background:#2196F3;">Refresh List</button>
+
+
+    <h3>User Leaderboard</h3>
+    <ul class="listView">
+        <li v-for="(row, i) in userLeaderboard" :key="i">
+            <strong>{{ row.total_legs }}</strong> - {{ row.username }} - {{ row.education }}
+        </li>
+        <li v-if="userLeaderboard.length === 0" style="color:#aaa;">No legs yet.</li>
+    </ul>
+    <button @click="fetchEducationLeaderboard" style="background:#2196F3;">Refresh List</button>
 </div>
 
 <script>
@@ -57,6 +76,8 @@
             return {
                 form: { username: '', education: '' },
                 users: [],
+                educationLeaderboard: [],
+                userLeaderboard: [],
                 loading: false,
                 statusMsg: '',
                 statusClass: ''
@@ -64,6 +85,8 @@
         },
         mounted() {
             this.fetchUsers();
+            this.fetchEducationLeaderboard();
+            this.fetchUserLeaderboard();
         },
         methods: {
             async submitUser() {
@@ -100,6 +123,28 @@
                     if (res.ok) this.users = await res.json();
                 } catch (e) {
                     console.error('Failed to fetch users:', e);
+                }
+            },
+            async fetchEducationLeaderboard() {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/education_leg_counts?select=*`, {
+                        headers
+                    });
+                    if (res.ok) this.educationLeaderboard = await res.json();
+                    console.log(this.educationLeaderboard);
+                } catch (e) {
+                    console.error('Failed to fetch leaderboard:', e);
+                }
+            },
+            async fetchUserLeaderboard() {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/user_legs_leaderboard?select=*`, {
+                        headers
+                    });
+                    if (res.ok) this.userLeaderboard = await res.json();
+                    console.log(this.userLeaderboard);
+                } catch (e) {
+                    console.error('Failed to fetch leaderboard:', e);
                 }
             },
             setStatus(msg, type) {
