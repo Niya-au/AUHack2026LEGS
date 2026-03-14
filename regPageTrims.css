@@ -113,6 +113,7 @@ p {
   margin-bottom: 10px;
   box-shadow: 1px 2px 2px black;
 }
+
 .leaderboard {
   width: 110px;
   height: 30px;
@@ -140,7 +141,7 @@ p {
   align-items: center;
 }
 
-#newUser p{
+#newUser p {
   text-align: left;
   width: 240px;
   margin-bottom: 4px;
@@ -151,7 +152,7 @@ p {
   margin-top: 120px;
   margin-bottom: 50px !important;
   text-align: center !important;
-  
+
 }
 
 input {
@@ -165,17 +166,17 @@ input {
   color: #000000;
   padding-left: 10px;
 
-  
+
 }
 
-#nextBack{
+#nextBack {
   display: flex;
   flex-direction: row;
   margin-top: 300px;
   gap: 95px;
 }
 
-.nextBack{
+.nextBack {
   width: 80px;
   height: 30px;
   border-radius: 6px;
@@ -192,13 +193,13 @@ input {
 
 /*-------------------------- first time user -> no ---------------------------*/
 
-.topBtns{
+.topBtns {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-#OldUser p{
+#OldUser p {
   text-align: left;
   width: 240px;
   margin-bottom: 4px;
@@ -208,40 +209,83 @@ input {
 /*-------------------------- Registration success ---------------------------*/
 
 #confScreen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#confScreen p{
+#confScreen p {
   text-align: center;
   width: 270px;
   margin-bottom: 4px;
 }
 
-#confScreen button{
+#confScreen button {
   margin-top: 360px;
 }
 
-#bigText{
+#bigText {
   margin-bottom: 35px !important;
 }
 
 
+/*-------------------------- Leaderboard ---------------------------*/
+#leaderboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+#leaderboard p {
+  margin-top: 55px;
+}
 
+#leaderboardWhitePart {
+  background-color: white;
+  margin-top: 10px;
+  border-radius: 10px 10px 0 0;
+  width: 402px;
+  ;
+}
 
-
+#backButton {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+}
 
 ul {
   list-style-type: none;
   padding: 0;
 }
 
+#homebutton {
+  background-color: #A79D7A;
+  width: 402px;
+  padding-top: 5px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  box-shadow: 0px -5px 6px rgba(0, 0, 0, 0.3);
+}
+
+.listView {
+    font-family: "Allerta", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+}
+
+#homebutton img {
+  padding-top: 3px;
+}
+
 li {
   padding: 8px;
-  margin: 5px 0;
+  margin: 2px 0;
   background-color: #f9f9f9;
   border-radius: 4px;
 }
-
+  
