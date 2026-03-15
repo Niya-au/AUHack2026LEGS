@@ -79,8 +79,9 @@ save nameList separately? maybe
 
             <div id="leaderboardWhitePart">
                 <ul class=listView>
-                    <li v-for="(user, i) in users" :key="i">
-                        <strong>{{ user.username }}</strong> <br> {{ user.education }}
+                    <li v-for="(user, i) in users" :key="i" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><strong>{{ user.username }}</strong> <br> {{ user.education }}</span>
+                        <span><strong>{{ user.total_legs }}</strong></span>
                     </li>
                 </ul>
             </div>
