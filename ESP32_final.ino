@@ -1,3 +1,7 @@
+/** 
+    This code connects to the database via WiFi for a new entry, starts logging time when the water level starts to drop and sends the average flow rate and total drinking time to the database.
+**/
+
 // Import WiFi and HTTP libraries
 #include <WiFi.h>
 #include <HTTPClient.h>
