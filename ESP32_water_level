@@ -1,3 +1,7 @@
+/** 
+    Test code to check if sensors and hardware work with flowrate calculation and time elapsed.
+**/
+
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
